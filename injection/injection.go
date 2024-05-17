@@ -59,8 +59,12 @@ func EnableInjectionOrDie(ctx context.Context, cfg *rest.Config) (context.Contex
 	ctx = WithConfig(ctx, cfg)
 
 	namespace, ok := os.LookupEnv("NAMESPACE_TO_HANDLE")
+<<<<<<< HEAD
 	if ok && namespace != "" {
 		logging.FromContext(ctx).Infof("Restricting to namespace %v", namespace)
+=======
+	if ok {
+>>>>>>> 5e789f1a (namespace patch)
 		ctx = WithNamespaceScope(ctx, namespace)
 	}
 	ctx, informers := Default.SetupInformers(ctx, cfg)

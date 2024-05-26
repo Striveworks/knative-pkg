@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"sync"
 	"time"
 
@@ -142,6 +143,14 @@ func FilterControllerGK(gk schema.GroupKind) func(obj interface{}) bool {
 		object, ok := obj.(metav1.Object)
 		if !ok {
 			return false
+		}
+
+		namespace, ok := os.LookupEnv("NAMESPACE_TO_HANDLE")
+		if ok {
+			ns := object.GetNamespace()
+			if namespace != ns {
+				return false
+			}
 		}
 
 		owner := metav1.GetControllerOf(object)

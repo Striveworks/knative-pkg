@@ -19,6 +19,7 @@ limitations under the License.
 package namespace
 
 import (
+	"os"
 	context "context"
 
 	apicorev1 "k8s.io/api/core/v1"
@@ -36,8 +37,11 @@ import (
 )
 
 func init() {
-	injection.Default.RegisterInformer(withInformer)
-	injection.Dynamic.RegisterDynamicInformer(withDynamicInformer)
+	namespace, ok := os.LookupEnv("NAMESPACE_TO_HANDLE")
+	if !ok || namespace == "" {
+		injection.Default.RegisterInformer(withInformer)
+		injection.Dynamic.RegisterDynamicInformer(withDynamicInformer)
+	}
 }
 
 // Key is used for associating the Informer inside the context.Context.

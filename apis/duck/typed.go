@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -47,16 +48,22 @@ var _ InformerFactory = (*TypedInformerFactory)(nil)
 
 // Get implements InformerFactory.
 func (dif *TypedInformerFactory) Get(ctx context.Context, gvr schema.GroupVersionResource) (cache.SharedIndexInformer, cache.GenericLister, error) {
+	namespace, ok := os.LookupEnv("NAMESPACE_TO_HANDLE")
+	if !ok {
+		namespace = ""
+	}
+	resource := dif.Client.Resource(gvr).Namespace(namespace)
+
 	// Avoid error cases, like the GVR does not exist.
 	// It is not a full check. Some RBACs might sneak by, but the window is very small.
-	if _, err := dif.Client.Resource(gvr).List(ctx, metav1.ListOptions{}); err != nil {
+	if _, err := resource.List(ctx, metav1.ListOptions{}); err != nil {
 		return nil, nil, err
 	}
 
 	listObj := dif.Type.GetListType()
 	lw := &cache.ListWatch{
-		ListFunc:  asStructuredLister(ctx, dif.Client.Resource(gvr).List, listObj),
-		WatchFunc: AsStructuredWatcher(ctx, dif.Client.Resource(gvr).Watch, dif.Type),
+		ListFunc:  asStructuredLister(ctx, resource.List, listObj),
+		WatchFunc: AsStructuredWatcher(ctx, resource.Watch, dif.Type),
 	}
 	inf := cache.NewSharedIndexInformer(lw, dif.Type, dif.ResyncPeriod, cache.Indexers{
 		cache.NamespaceIndex: cache.MetaNamespaceIndexFunc,

@@ -18,6 +18,7 @@ package injection
 
 import (
 	"context"
+	"os"
 
 	"go.uber.org/zap"
 	"k8s.io/client-go/rest"
@@ -57,6 +58,11 @@ func EnableInjectionOrDie(ctx context.Context, cfg *rest.Config) (context.Contex
 	}
 	ctx = WithConfig(ctx, cfg)
 
+	namespace, ok := os.LookupEnv("NAMESPACE_TO_HANDLE")
+	if ok && namespace != "" {
+		logging.FromContext(ctx).Infof("Restricting to namespace %v", namespace)
+		ctx = WithNamespaceScope(ctx, namespace)
+	}
 	ctx, informers := Default.SetupInformers(ctx, cfg)
 
 	return ctx, func() {

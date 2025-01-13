@@ -20,6 +20,8 @@ package factory
 
 import (
 	context "context"
+	"fmt"
+	"runtime/debug"
 
 	informers "k8s.io/client-go/informers"
 	client "knative.dev/pkg/client/injection/kube/client"
@@ -40,6 +42,9 @@ func withInformerFactory(ctx context.Context) context.Context {
 	opts := make([]informers.SharedInformerOption, 0, 1)
 	if injection.HasNamespaceScope(ctx) {
 		opts = append(opts, informers.WithNamespace(injection.GetNamespaceScope(ctx)))
+	} else {
+		fmt.Printf("\033[1;31mXXX XXX XXX missing namespace in informerFactory %+v\033[0m\n", ctx)
+		debug.PrintStack()
 	}
 	return context.WithValue(ctx, Key{},
 		informers.NewSharedInformerFactoryWithOptions(c, controller.GetResyncPeriod(ctx), opts...))

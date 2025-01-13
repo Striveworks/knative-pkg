@@ -72,6 +72,7 @@ func NewImpl(ctx context.Context, r Interface, optionsFns ...controller.OptionsF
 				promoteFunc(bkt)
 
 				all, err := lister.List(labels.Everything())
+				fmt.Printf("\033[31mXXX all things are %+v\n\033[0m", all)
 				if err != nil {
 					return err
 				}

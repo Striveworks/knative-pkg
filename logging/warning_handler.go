@@ -29,5 +29,5 @@ func (h *WarningHandler) HandleWarningHeader(code int, agent string, message str
 		return
 	}
 
-	h.Logger.Warn("API Warning: " + message)
+	h.Logger.With(zap.Stack("stacktrace")).Warn("API Warning: " + message)
 }

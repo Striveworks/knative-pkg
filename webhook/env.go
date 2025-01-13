@@ -66,3 +66,11 @@ func SecretNameFromEnv(defaultSecretName string) string {
 	}
 	return secret
 }
+
+func OptionalNameFromEnv(envName string, defaultValue string) string {
+	value := os.Getenv(envName)
+	if value == "" {
+		return defaultValue
+	}
+	return value
+}

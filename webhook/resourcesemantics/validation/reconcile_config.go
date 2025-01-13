@@ -90,6 +90,9 @@ func (ac *reconciler) Reconcile(ctx context.Context, key string) error {
 	}
 	caCert, ok := secret.Data[certresources.CACert]
 	if !ok {
+		caCert, ok = secret.Data[certresources.CACrt]
+	}
+	if !ok {
 		return fmt.Errorf("secret %q is missing %q key", ac.secretName, certresources.CACert)
 	}
 

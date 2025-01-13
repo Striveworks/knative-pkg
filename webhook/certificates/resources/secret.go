@@ -26,12 +26,17 @@ import (
 
 const (
 	// ServerKey is the name of the key associated with the secret's private key.
-	ServerKey = "server-key.pem"
+	ServerKey = "tls.key"
 	// ServerCert is the name of the key associated with the secret's public key.
-	ServerCert = "server-cert.pem"
+	ServerCert = "tls.crt"
 	// CACert is the name of the key associated with the certificate of the CA for
 	// the keypair.
-	CACert = "ca-cert.pem"
+	CACert = "ca.crt"
+
+	// Standard naming for TLS secret
+	TLSKey = "tls.key"
+	TLSCrt = "tls.crt"
+	CACrt  = "ca.crt"
 
 	oneWeek = 7 * 24 * time.Hour
 )

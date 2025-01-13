@@ -151,10 +151,16 @@ func New(
 
 				serverKey, ok := secret.Data[certresources.ServerKey]
 				if !ok {
+					serverKey, ok = secret.Data[certresources.TLSKey]
+				}
+				if !ok {
 					logger.Warn("server key missing")
 					return nil, nil
 				}
 				serverCert, ok := secret.Data[certresources.ServerCert]
+				if !ok {
+					serverCert, ok = secret.Data[certresources.TLSCrt]
+				}
 				if !ok {
 					logger.Warn("server cert missing")
 					return nil, nil

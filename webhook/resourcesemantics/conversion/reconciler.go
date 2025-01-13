@@ -77,6 +77,9 @@ func (r *reconciler) Reconcile(ctx context.Context, key string) error {
 
 	cacert, ok := secret.Data[certresources.CACert]
 	if !ok {
+		cacert, ok = secret.Data[certresources.CACrt]
+	}
+	if !ok {
 		return fmt.Errorf("secret %q is missing %q key", r.secretName, certresources.CACert)
 	}
 
